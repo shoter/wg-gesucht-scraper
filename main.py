@@ -6,7 +6,7 @@ import collections
 class Empty(object):
     pass
 
-def namedtuple_with_defaults(typename, field_names, default_values=()):
+def __namedtuple_with_defaults__(typename, field_names, default_values=()):
     T = collections.namedtuple(typename, field_names)
     T.__new__.__defaults__ = (None,) * len(T._fields)
     if isinstance(default_values, collections.Mapping):
@@ -16,11 +16,11 @@ def namedtuple_with_defaults(typename, field_names, default_values=()):
     T.__new__.__defaults__ = tuple(prototype)
     return T
 
-Settings = namedtuple_with_defaults("Settings", 
+Settings = __namedtuple_with_defaults__("Settings", 
 "minArea maxPrice cityId categoryId rentId",
 [0, 99999, 8, 1, 2])
 
-def normalizeText(text):
+def __normalizeText__(text):
     text = text.strip()
     text = re.sub(" +", " ", text)
     text = re.sub("\n", "", text)
@@ -71,7 +71,7 @@ def getOfferInformation(url):
     result.details = []
     for div in divs:
         
-        result.details.append(normalizeText(div.get_text()))
+        result.details.append(__normalizeText__(div.get_text()))
 
     headlines = ss.find_all("h2", "headline-key-facts")
 
@@ -87,16 +87,16 @@ def getOfferInformation(url):
     links = ss.find_all("a")
     for link in links:
         if link.has_attr("onclick") and link["onclick"].find("map_tab") != -1:
-            result.location = normalizeText(link.get_text())
+            result.location = __normalizeText__(link.get_text())
 
     divs = ss.find_all("div", "col-sm-3")
     for div in divs:
         if div.get_text().find("Availability") != -1:
             bs = div.find("p").find_all("b")
-            result.availability = normalizeText(bs[0].get_text())
+            result.availability = __normalizeText__(bs[0].get_text())
 
 
-    result.title = normalizeText(
+    result.title = __normalizeText__(
         ss.find_all("h1")[0].get_text()
     )
 
